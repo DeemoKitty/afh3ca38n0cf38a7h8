@@ -23,9 +23,7 @@ public abstract class Window {
 		this.columns = size.getColumns();
 	}
 	
-	public void draw() {
-		
-	}
+	
 	
 	public int getRow() { return row; }
 	public int getColumn() { return column; }
