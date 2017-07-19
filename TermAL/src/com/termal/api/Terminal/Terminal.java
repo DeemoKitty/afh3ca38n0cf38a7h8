@@ -1,5 +1,8 @@
 package com.termal.api.Terminal;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import com.termal.api.tools.TermSize;
 
 public class Terminal {
@@ -10,17 +13,25 @@ public class Terminal {
 
 	private char[][] board;
 	private char[][] displayBoard;
+	
+	private ProcessBuilder pb;
+	
+	private boolean flushCalled = false;
 
-	public Terminal(int columns, int rows) {
+	private ArrayList<Window> windows = new ArrayList<Window>();
+
+	public Terminal(int columns, int rows) throws IOException {
 		this.rows = rows;
 		this.columns = columns;
 		this.board = new char[rows][columns];
+		
 	}
 
-	public Terminal(TermSize size) {
+	public Terminal(TermSize size) throws IOException {
 		this.rows = size.getRows();
 		this.columns = size.getColumns();
 		this.board = new char[rows][columns];
+	
 	}
 
 	public void display() {
@@ -39,17 +50,36 @@ public class Terminal {
 					board[i][k] = '.';
 				}
 			}
-		}else {
+		} else {
 			System.err.println("Debug not enabled. Not drawing the board. To enable it use enableDebug(flag)");
 		}
 	}
-	
-	public void flush() {
-		displayBoard = null;
+
+	public void AddWindow(Window window) {
+		windows.add(window);
 	}
-	
-	public void refresh() {
+
+	public void flush() throws IOException {
+		board = new char[rows][columns];
+		displayBoard = null;
+		flushCalled = true;
+	}
+
+	public void refresh() throws IOException {
+		while(!flushCalled) {
+			flush();
+		}
+		if (!windows.isEmpty()) {
+			for (int i = 0; i < windows.size(); i++) {
+				for (int y = windows.get(i).getRow(); y <= windows.get(i).getRows(); y++) {
+					for (int x = windows.get(i).getColumn(); x <= windows.get(i).getColumns(); x++) {
+						putCharacter(x, y, '*');
+					}
+				}
+			}
+		}
 		displayBoard = board.clone();
+		flushCalled = false;
 	}
 
 	public void putCharacter(int column, int row, char character) {
@@ -63,7 +93,7 @@ public class Terminal {
 	public int getColumns() {
 		return columns;
 	}
-	
+
 	public void enableDebug(boolean flag) {
 		debug = flag;
 	}

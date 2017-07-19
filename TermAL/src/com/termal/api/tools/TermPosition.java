@@ -11,4 +11,11 @@ public class TermPosition {
 	
 	public int getRow() { return row; }
 	public int getColumn() { return column; }
+	
+	@Override
+	public String toString() {
+		String output = null;
+		output += "{ X: " + row + ", Y: " + column + " }";
+		return output;
+	}
 }

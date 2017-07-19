@@ -11,4 +11,11 @@ public class TermSize {
 	
 	public int getRows() { return rows; }
 	public int getColumns() { return columns; }
+	
+	@Override
+	public String toString() {
+		String output = null;
+		output += "{ Width: " + columns + ", Height: " + rows + " }"; 
+		return output;
+	}
 }
