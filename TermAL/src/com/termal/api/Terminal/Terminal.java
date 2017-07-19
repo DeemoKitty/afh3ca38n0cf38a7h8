@@ -3,6 +3,8 @@ package com.termal.api.Terminal;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
+
 import com.termal.api.tools.TermSize;
 
 public class Terminal {
@@ -19,19 +21,28 @@ public class Terminal {
 	private boolean flushCalled = false;
 
 	private ArrayList<Window> windows = new ArrayList<Window>();
+	
+	private JFrame frame = null;
+	private JTextArea term = null;
 
 	public Terminal(int columns, int rows) throws IOException {
 		this.rows = rows;
 		this.columns = columns;
 		this.board = new char[rows][columns];
-		
+		Setup();
 	}
 
 	public Terminal(TermSize size) throws IOException {
 		this.rows = size.getRows();
 		this.columns = size.getColumns();
 		this.board = new char[rows][columns];
+		Setup();
+	}
 	
+	private void Setup() {
+		frame = new JFrame("Grid");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 	}
 
 	public void display() {
