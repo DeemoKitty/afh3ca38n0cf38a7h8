@@ -4,7 +4,7 @@ public class TermSize {
 	private int rows;
 	private int columns;
 	
-	public TermSize(int columns, int rows) {
+	public TermSize(int rows, int columns) {
 		this.rows = rows;
 		this.columns = columns;
 	}

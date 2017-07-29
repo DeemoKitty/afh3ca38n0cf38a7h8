@@ -14,7 +14,7 @@ public class TermPosition {
 	
 	@Override
 	public String toString() {
-		String output = null;
+		String output = "";
 		output += "{ X: " + row + ", Y: " + column + " }";
 		return output;
 	}
