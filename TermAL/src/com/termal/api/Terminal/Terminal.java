@@ -189,11 +189,12 @@ public class Terminal {
 	private void refresh() {
 		if (!windows.isEmpty()) {
 			for (int i = 0; i < windows.size(); i++) {
-				for (int y = windows.get(i).getRow(); y <= windows.get(i).getRows(); y++) {
+				/*for (int y = windows.get(i).getRow(); y <= windows.get(i).getRows(); y++) {
 					for (int x = windows.get(i).getColumn(); x <= windows.get(i).getColumns(); x++) {
 						putCharacter(x, y, "*");
 					}
-				}
+				}*/
+				windows.get(i).update();
 			}
 		}
 		displayBoard = board.clone();
@@ -281,4 +282,15 @@ public class Terminal {
 			throw new IndexOutOfBoundsException("Selected window does not exist. (Value either too big or negative)");
 	}
 
+	public void DrawToBoard(String[][] display, int row, int column, int rows, int columns) {
+		int yy = 0;
+		for(int y = row; y < rows; y++) {
+			int xx = 0;
+			for(int x = column; x < columns; x++) {
+				board[y][x] = display[yy][xx];
+				xx++;
+			}
+			yy++;
+		}
+	}
 }

@@ -18,10 +18,10 @@ public class Test {
 
 		System.out.println("Size X: " + terminal.getColumns() + " ; Size Y: " + terminal.getRows());
 
-		terminal.enableDebug(true);
+		terminal.enableDebug(false);
 
-		Win win = new Win("Test Window", new TermPosition(2, 2), new TermSize(5, 10));
-		Win window = new Win("Window D", 6, 30, 5, 10);
+		Win win = new Win(terminal, "Test Window", new TermPosition(2, 2), new TermSize(5, 10));
+		Win window = new Win(terminal, "Window D", 6, 30, 10, 20);
 
 		// System.out.println("Window created with dimentions of: " +
 		// window.getPosition().toString() + "\n" + window.getSize().toString());
@@ -37,6 +37,10 @@ public class Test {
 				// TODO Auto-generated method stub
 				if(arg0.isControlDown())
 					terminal.Dispose();
+				if(arg0.isShiftDown()) {
+					window.setColumn(100);
+					terminal.display();
+				}
 			}
 
 			@Override

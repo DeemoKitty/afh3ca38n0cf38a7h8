@@ -4,14 +4,14 @@ import com.termal.api.Terminal.Terminal;
 import com.termal.api.tools.TermPosition;
 import com.termal.api.tools.TermSize;
 
-public abstract class Window extends UI{
-
-	public Window(Terminal terminal, String name, int row, int column, int rows, int columns) {
+public abstract class Button extends UI {
+	
+	public Button(Terminal terminal, String name, int row, int column, int rows, int columns) {
 		super(terminal, name, row, column, rows, columns);
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Window(Terminal terminal, String name, TermPosition pos, TermSize size) {
+	public Button(Terminal terminal, String name, TermPosition pos, TermSize size) {
 		super(terminal, name, pos, size);
 	}
 	
