@@ -22,6 +22,7 @@ public abstract class Button extends UI {
 			CreateBoard();
 			changed = false;
 		}
+		display[rows / 2][columns / 2] = "o"; 
 		terminal.DrawToBoard(display, row, column, getRows(), getColumns());
 	}
 	

@@ -9,10 +9,10 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 
 import com.termal.api.tools.TermPosition;
 import com.termal.api.tools.TermSize;
+import com.termal.api.ui.UI;
 import com.termal.api.ui.Window;
 
 public class Terminal {
@@ -29,7 +29,7 @@ public class Terminal {
 	// --------------------------------//
 
 	// Window handler
-	private ArrayList<Window> windows = new ArrayList<Window>();
+	private ArrayList<UI> uiComponents = new ArrayList<UI>();
 	// -------------------------------------------------------------//
 
 	// Frame and terminal
@@ -87,6 +87,7 @@ public class Terminal {
 		Setup();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void Setup() {
 
 		int rows = 0;
@@ -187,21 +188,24 @@ public class Terminal {
 	}
 
 	private void refresh() {
-		if (!windows.isEmpty()) {
-			for (int i = 0; i < windows.size(); i++) {
-				/*for (int y = windows.get(i).getRow(); y <= windows.get(i).getRows(); y++) {
-					for (int x = windows.get(i).getColumn(); x <= windows.get(i).getColumns(); x++) {
+		if (!uiComponents.isEmpty()) {
+			for (int i = 0; i < uiComponents.size(); i++) {
+				/*for (int y = uiComponents.get(i).getRow(); y <= uiComponents.get(i).getRows(); y++) {
+					for (int x = uiComponents.get(i).getColumn(); x <= uiComponents.get(i).getColumns(); x++) {
 						putCharacter(x, y, "*");
 					}
 				}*/
-				windows.get(i).update();
+				uiComponents.get(i).update();
 			}
 		}
 		displayBoard = board.clone();
 	}
 
 	public void putCharacter(int column, int row, String character) {
-		board[row][column] = character;
+		if(column < 0 || column > columns || row < 0 || row > rows)
+			throw new IndexOutOfBoundsException("Selected position is out of bounds");
+		else
+			board[row][column] = character;
 	}
 
 	public int getRows() {
@@ -228,19 +232,19 @@ public class Terminal {
 		return new TermPosition(x, y);
 	}
 
-	public Window getWindow(int i) {
-		if (!windows.isEmpty()) {
-			if (i < windows.size() && i >= 0)
-				return windows.get(i);
+	public UI getUIComponent(int i) {
+		if (!uiComponents.isEmpty()) {
+			if (i < uiComponents.size() && i >= 0)
+				return uiComponents.get(i);
 			else
-				return windows.get(windows.size() - 1);
+				return uiComponents.get(uiComponents.size() - 1);
 		} else {
 			return null;
 		}
 	}
 
-	public int getWindows() {
-		return windows.size();
+	public int getuiComponents() {
+		return uiComponents.size();
 	}
 
 	public void setMouseListener(MouseListener ml) {
@@ -253,9 +257,17 @@ public class Terminal {
 		term.addKeyListener(kl);
 	}
 
+	public void removeKeyListener(KeyListener kl) {
+		term.removeKeyListener(kl);
+	}
+	
+	public void removeMouseListener(MouseListener ml) {
+		term.removeMouseListener(ml);
+	}
+	
 	public void Dispose() {
-		while (!windows.isEmpty()) {
-			windows.remove(0);
+		while (!uiComponents.isEmpty()) {
+			uiComponents.remove(0);
 		}
 		if (l != null)
 			term.removeKeyListener(l);
@@ -268,18 +280,39 @@ public class Terminal {
 	}
 
 	public void AddWindow(Window window) {
-		windows.add(window);
+		uiComponents.add(window);
+		display();
 	}
 
 	public void RemoveWindow(Window window) {
-		windows.remove(window);
+		uiComponents.remove(window);
+		display();
+	}
+	
+	public void AddUIComponent(UI ui) {
+		uiComponents.add(ui);
+		display();
+	}
+	
+	public void RemoveUIComponent(UI ui) {
+		uiComponents.remove(ui);
+		display();
 	}
 
 	public void RemoveWindow(int i) {
-		if (i < windows.size())
-			windows.remove(i);
+		if (i < uiComponents.size())
+			uiComponents.remove(i);
 		else
 			throw new IndexOutOfBoundsException("Selected window does not exist. (Value either too big or negative)");
+	}
+	
+	public UI getFocusedComponent() {
+		for(int i = 0; i < uiComponents.size(); i++) {
+			if(uiComponents.get(i).getFocus())
+				return uiComponents.get(i);
+			else continue;
+		}
+		return null;
 	}
 
 	public void DrawToBoard(String[][] display, int row, int column, int rows, int columns) {

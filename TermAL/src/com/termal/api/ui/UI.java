@@ -16,6 +16,7 @@ public abstract class UI {
 	protected TermSize size;
 	protected Terminal terminal;
 	protected boolean changed;
+	protected boolean focused;
 	
 	protected String[][] display;
 	
@@ -65,8 +66,8 @@ public abstract class UI {
 	protected abstract void Dump();
 	
 	protected void CreateBoard() {
-		for(int y = 0; y <= rows; y++) {
-			for(int x = 0; x <= columns; x++) {
+		for(int y = 0; y < rows; y++) {
+			for(int x = 0; x < columns; x++) {
 				if(x > 0 && x < columns - 1 && y > 0 && y < rows - 1)
 					display[y][x] = " ";
 				else
@@ -80,23 +81,45 @@ public abstract class UI {
 	public int getRows() { return rows+row; }
 	public int getColumns() { return columns+column; }
 	public String getName() { return name; }
+	public boolean getFocus() { return focused; }
 	
 	public String getBounds() {
 		return (name + " Start Pos: { " + getRow() + ", " + getColumn() + "}, Size: { " + getRows() + ", " + getColumns() + "}");
 	}
 	
-	public void setRow(int row) { this.row = row; this.changed = true; }
-	public void setColumn(int column) { this.column = column; this.changed = true; }
-	public void setRows(int rows) { this.rows = rows; this.changed = true; }
-	public void setColumns(int columns) { this.columns = columns; this.changed = true; }
+	public void setRow(int row) { this.row = row; this.pos = new TermPosition(row, column); this.changed = true; }
+	public void setColumn(int column) { this.column = column; this.pos = new TermPosition(row, column); this.changed = true; }
+	public void setRows(int rows) { this.rows = rows; this.size = new TermSize(rows, columns); this.changed = true; }
+	public void setColumns(int columns) { this.columns = columns; this.size = new TermSize(rows, columns); this.changed = true; }
+	public void setFocus(boolean focused) { this.focused = focused; } 
 	public boolean checkBounds(int x, int y) {
 		if(x >= getColumn() && x <= getColumns() && y >= getRow() && y <= getRows()) {
+			focused = true;
 			return true;
 		}else {
+			focused = false;
 			return false;
 		}
 	}
 	
+	public void setPosition(TermPosition pos) { this.pos = pos; }
+	public void setSize(TermSize size) { this.size = size; }
 	public TermPosition getPosition() { return pos; }
 	public TermSize getSize() { return size; }
+	
+	public String[][] getDisplay(){
+		return display;
+	}
+	
+	public void DrawToTemp(String[][] display, int row, int column, int rows, int columns) {
+		int yy = 0;
+		for(int y = row; y < rows; y++) {
+			int xx = 0;
+			for(int x = column; x < columns; x++) {
+				this.display[y][x] = display[yy][xx];
+				xx++;
+			}
+			yy++;
+		}
+	}
 }
