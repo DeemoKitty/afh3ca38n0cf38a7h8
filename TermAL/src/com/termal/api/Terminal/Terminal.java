@@ -14,6 +14,7 @@ import com.termal.api.tools.TermPosition;
 import com.termal.api.tools.TermSize;
 import com.termal.api.ui.UI;
 import com.termal.api.ui.Window;
+import com.termal.api.ui.Chr;
 
 public class Terminal {
 
@@ -30,6 +31,7 @@ public class Terminal {
 
 	// Window handler
 	private ArrayList<UI> uiComponents = new ArrayList<UI>();
+	private ArrayList<Chr> placedCharacter = new ArrayList<Chr>();
 	// -------------------------------------------------------------//
 
 	// Frame and terminal
@@ -47,7 +49,7 @@ public class Terminal {
 	private MouseListener ml;
 	// ------------------------//
 
-	public Terminal(int columns, int rows, int resolution) {
+	public Terminal(int rows, int columns, int resolution) {
 		this.rows = rows;
 		this.columns = columns;
 		this.board = new String[rows][columns];
@@ -63,7 +65,7 @@ public class Terminal {
 		Setup();
 	}
 
-	public Terminal(int columns, int rows, boolean fullscreen, int resolution) {
+	public Terminal(int rows, int columns, boolean fullscreen, int resolution) {
 		this.rows = rows;
 		this.columns = columns;
 		this.board = new String[rows][columns];
@@ -198,6 +200,11 @@ public class Terminal {
 				uiComponents.get(i).update();
 			}
 		}
+		if(!placedCharacter.isEmpty()) {
+			for(int i = 0; i < placedCharacter.size(); i++) {
+				board[placedCharacter.get(i).getRow()][placedCharacter.get(i).getColumn()] = placedCharacter.get(i).getChar();
+			}
+		}
 		displayBoard = board.clone();
 	}
 
@@ -205,7 +212,7 @@ public class Terminal {
 		if(column < 0 || column > columns || row < 0 || row > rows)
 			throw new IndexOutOfBoundsException("Selected position is out of bounds");
 		else
-			board[row][column] = character;
+			placedCharacter.add(new Chr(row, column, character));
 	}
 
 	public int getRows() {
@@ -310,11 +317,18 @@ public class Terminal {
 		for(int i = 0; i < uiComponents.size(); i++) {
 			if(uiComponents.get(i).getFocus())
 				return uiComponents.get(i);
-			else continue;
+l			else continue;
 		}
 		return null;
 	}
 
+	public void WriteString(int row, int column, String text) {
+		int k = 0;
+		for(int i = column; i < column + text.length(); i++) {
+			putCharacter(row, column, text.substring(k, k));
+		}
+	}
+	
 	public void DrawToBoard(String[][] display, int row, int column, int rows, int columns) {
 		int yy = 0;
 		for(int y = row; y < rows; y++) {
